@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aniversário da Alicia</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #0a0a0a;
+        }
+
+        .container {
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .small-image {
+            max-width: 100%;
+        }
+
+        /* Estilização do botão */
+        .custom-button {
+            background-color: transparent;
+            border: 2px solid #c09c34;
+            color: #c09c34;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .custom-button:hover {
+            background-color: #c09c34;
+            color: white;
+        }
+        #pulsating-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+}
+    </style>
+    <script>
+        var audio;
+
+        window.onload = function() {
+            audio = new Audio('./mp3/Queen - We Will Rock You.mp3');
+            audio.play();
+        };
+
+        var audio;
+var audioContext;
+var analyser;
+var dataArray;
+var canvas;
+var canvasContext;
+var animationId;
+var imageElement;
+
+window.onload = function() {
+    audio = new Audio('./mp3/Queen - We Will Rock You.mp3');
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    audio.src = './mp3/Queen - We Will Rock You.mp3';
+    audio.crossOrigin = 'anonymous';
+
+    var source = audioContext.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+
+    analyser.fftSize = 256;
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    canvas = document.getElementById('pulsating-canvas');
+    canvasContext = canvas.getContext('2d');
+    imageElement = document.querySelector('.container img[src="./img/queen-bohemian-rhapsody.jpg"]');
+
+    audio.play();
+    animate();
+};
+
+function animate() {
+    analyser.getByteFrequencyData(dataArray);
+
+    // Calculate the average amplitude of the audio data
+    var sum = dataArray.reduce((a, b) => a + b, 0);
+    var averageAmplitude = sum / dataArray.length;
+
+    // Calculate the scale factor based on the average amplitude
+    var scaleFactor = 1 + averageAmplitude * 0.01;
+
+    // Apply the scale factor to the image
+    imageElement.style.transform = `scale(${scaleFactor})`;
+
+    animationId = requestAnimationFrame(animate);
+}
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <img src="img/titulo.jpg" alt="Título" class="small-image">
+        <canvas id="pulsating-canvas"></canvas>
+        <img src="./img/queen-bohemian-rhapsody.jpg" alt="Freddie Mercury">
+    </div>
+    
+    <div class="container">
+        <button class="custom-button" onclick="window.location.href='convite.html'">Entrar</button>
+    </div>
+
+
+</body>
+</html>
