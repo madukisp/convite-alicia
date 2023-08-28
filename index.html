@@ -8,6 +8,7 @@
         body {
             margin: 0;
             background-color: #0a0a0a;
+            color: #c09c34; /* Cor de texto padrão */
         }
 
         .container {
@@ -22,10 +23,11 @@
             margin: 10px auto;
         }
 
-        /* Estilização do botão */
-        .custom-button {
+        /* Estilização do botão e do player de áudio */
+        .custom-button,
+        audio {
             background-color: transparent;
-            border: 2px solid #c09c34;
+            border: 1px solid #c09c34;
             color: #c09c34;
             padding: 10px 20px;
             font-size: 16px;
@@ -33,29 +35,52 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        .custom-button:hover {
+        .custom-button:hover,
+        audio:hover {
             background-color: #c09c34;
-            color: #000;
+            color: #fff;
+            border: 0px solid #c09c34;
+            border-radius: 10px;
         }
 
+        /* Estilização do controle de áudio */
+        audio::-webkit-media-controls-panel {
+            background-color: #0a0a0a;
+            color: #c09c34;
+        }
+
+        audio::-webkit-media-controls-play-button,
+        audio::-webkit-media-controls-pause-button,
+        audio::-webkit-media-controls-volume-slider-thumb {
+            background-color: #c09c34;
+        }
+
+        audio::-webkit-media-controls-volume-slider {
+            background-color: #fff;
+        }
+
+        /* Estilização do texto do tempo da música em branco */
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: #fff;
+        }
     </style>
-    
-    <!-- Script para reproduzir música ao entrar na página -->
-    <script>
-        window.onload = function() {
-            var audio = new Audio('./mp3/Queen - We Will Rock You.mp3'); 
-            audio.play();
-        };
-    </script>
+
 </head>
 <body>
     <div class="container">
         <img src="img/titulo.jpg" alt="Título">
         <img src="./img/queen-bohemian-rhapsody.jpg" alt="Freddie Mercury">
     </div>
-    
+
     <div class="container">
-        <button class="custom-button" onclick="window.location.href='convite.html'">Entrar</button>
+        <button class="custom-button" onclick="window.location.href='convite.html'">Entrar</button><br><br><br>
+    
+        <audio id="myAudio" controls autoplay>
+            <source src="./mp3/Queen - We Will Rock You.mp3" type="audio/mpeg">
+            Seu navegador não possui suporte ao elemento audio
+        </audio><br><br>
     </div>
+
 </body>
 </html>
