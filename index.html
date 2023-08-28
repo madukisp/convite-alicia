@@ -35,17 +35,9 @@
 
         .custom-button:hover {
             background-color: #c09c34;
-            color: white;
+            color: #000;
         }
 
-        /* Estilização da imagem pulsante */
-        .pulsating-image {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 10px auto;
-            animation: pulse 3s infinite;
-        }
     </style>
     
     <!-- Script para reproduzir música ao entrar na página -->
@@ -53,42 +45,13 @@
         window.onload = function() {
             var audio = new Audio('./mp3/Queen - We Will Rock You.mp3'); 
             audio.play();
-
-            // Sincronização da pulsação com a música
-            var img = document.querySelector('.pulsating-image');
-            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            var analyser = audioContext.createAnalyser();
-            var source = audioContext.createMediaElementSource(audio);
-
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
-
-            analyser.fftSize = 256;
-            var bufferLength = analyser.frequencyBinCount;
-            var dataArray = new Uint8Array(bufferLength);
-
-            function updatePulse() {
-                analyser.getByteFrequencyData(dataArray);
-
-                var average = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
-                var scaleFactor = 1 + (average / 256) * 0.5; // Ajuste o valor 0.5 para controlar a intensidade da pulsação
-
-                img.style.transform = `scale(${scaleFactor})`;
-                requestAnimationFrame(updatePulse);
-            }
-
-            audio.play().then(() => {
-                audioContext.resume().then(() => {
-                    updatePulse();
-                });
-            });
         };
     </script>
 </head>
 <body>
     <div class="container">
         <img src="img/titulo.jpg" alt="Título">
-        <img class="pulsating-image" src="./img/queen-bohemian-rhapsody.jpg" alt="Freddie Mercury">
+        <img src="./img/queen-bohemian-rhapsody.jpg" alt="Freddie Mercury">
     </div>
     
     <div class="container">
