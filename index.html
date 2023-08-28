@@ -22,10 +22,6 @@
             margin: 10px auto;
         }
 
-        .small-image {
-            max-width: 100%;
-        }
-
         /* Estilização do botão */
         .custom-button {
             background-color: transparent;
@@ -41,81 +37,62 @@
             background-color: #c09c34;
             color: white;
         }
-        #pulsating-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-}
+
+        /* Estilização da imagem pulsante */
+        .pulsating-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            animation: pulse 3s infinite;
+        }
     </style>
+    
+    <!-- Script para reproduzir música ao entrar na página -->
     <script>
-        var audio;
-
         window.onload = function() {
-            audio = new Audio('./mp3/Queen - We Will Rock You.mp3');
+            var audio = new Audio('./mp3/Queen - We Will Rock You.mp3'); 
             audio.play();
+
+            // Sincronização da pulsação com a música
+            var img = document.querySelector('.pulsating-image');
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            var analyser = audioContext.createAnalyser();
+            var source = audioContext.createMediaElementSource(audio);
+
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            analyser.fftSize = 256;
+            var bufferLength = analyser.frequencyBinCount;
+            var dataArray = new Uint8Array(bufferLength);
+
+            function updatePulse() {
+                analyser.getByteFrequencyData(dataArray);
+
+                var average = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+                var scaleFactor = 1 + (average / 256) * 0.5; // Ajuste o valor 0.5 para controlar a intensidade da pulsação
+
+                img.style.transform = `scale(${scaleFactor})`;
+                requestAnimationFrame(updatePulse);
+            }
+
+            audio.play().then(() => {
+                audioContext.resume().then(() => {
+                    updatePulse();
+                });
+            });
         };
-
-        var audio;
-var audioContext;
-var analyser;
-var dataArray;
-var canvas;
-var canvasContext;
-var animationId;
-var imageElement;
-
-window.onload = function() {
-    audio = new Audio('./mp3/Queen - We Will Rock You.mp3');
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioContext.createAnalyser();
-    audio.src = './mp3/Queen - We Will Rock You.mp3';
-    audio.crossOrigin = 'anonymous';
-
-    var source = audioContext.createMediaElementSource(audio);
-    source.connect(analyser);
-    analyser.connect(audioContext.destination);
-
-    analyser.fftSize = 256;
-    dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-    canvas = document.getElementById('pulsating-canvas');
-    canvasContext = canvas.getContext('2d');
-    imageElement = document.querySelector('.container img[src="./img/queen-bohemian-rhapsody.jpg"]');
-
-    audio.play();
-    animate();
-};
-
-function animate() {
-    analyser.getByteFrequencyData(dataArray);
-
-    // Calculate the average amplitude of the audio data
-    var sum = dataArray.reduce((a, b) => a + b, 0);
-    var averageAmplitude = sum / dataArray.length;
-
-    // Calculate the scale factor based on the average amplitude
-    var scaleFactor = 1 + averageAmplitude * 0.01;
-
-    // Apply the scale factor to the image
-    imageElement.style.transform = `scale(${scaleFactor})`;
-
-    animationId = requestAnimationFrame(animate);
-}
-
     </script>
 </head>
 <body>
     <div class="container">
-        <img src="img/titulo.jpg" alt="Título" class="small-image">
-        <canvas id="pulsating-canvas"></canvas>
-        <img src="./img/queen-bohemian-rhapsody.jpg" alt="Freddie Mercury">
+        <img src="img/titulo.jpg" alt="Título">
+        <img class="pulsating-image" src="./img/queen-bohemian-rhapsody.jpg" alt="Freddie Mercury">
     </div>
     
     <div class="container">
         <button class="custom-button" onclick="window.location.href='convite.html'">Entrar</button>
     </div>
-
-
 </body>
 </html>
